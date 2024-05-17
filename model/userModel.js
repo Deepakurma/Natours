@@ -2,7 +2,8 @@ import mongoose from "mongoose";
 import validator from "validator";
 // import bcrypt from "bcryptjs";
 import crypto from "crypto";
- 
+import { type } from "os";
+
 const userSchema = new mongoose.Schema({
   name: {
     type: "string",
@@ -40,8 +41,13 @@ const userSchema = new mongoose.Schema({
     },
   },
   passwordChanged: Date,
-  passwordResetToken : String,
-  passwordResetExpires : Date,
+  passwordResetToken: String,
+  passwordResetExpires: Date,
+  active: {
+    type: "boolean",
+    default: true,
+    select: false,
+  },
 });
 
 // userSchema.pre("save", async function (next) {
@@ -80,12 +86,15 @@ userSchema.methods.changePassword = async function (JWTTimesstamp) {
 //   return await bcrypt.compare(candidatePassword, userPassword);
 // };
 
-userSchema.methods.createPasswordResetToken = function() {
+userSchema.methods.createPasswordResetToken = function () {
   // Generate a random token
-  const resetToken = crypto.randomBytes(32).toString('hex');
+  const resetToken = crypto.randomBytes(32).toString("hex");
 
   // Hash the reset token
-  const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+  const hashedToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
   // console.log({ resetToken }, hashedToken);
   console.log(resetToken);
   console.log(hashedToken);
@@ -98,5 +107,10 @@ userSchema.methods.createPasswordResetToken = function() {
   // Return the unhashed reset token
   return resetToken;
 };
+
+userSchema.pre(/^find/, function (next) {
+  this.find({ active: { $ne: false } });
+  next();
+});
 
 export const user = mongoose.model("user", userSchema);

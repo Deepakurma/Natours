@@ -46,7 +46,7 @@ console.log(process.env.NODE_ENV);
 // Handle unhandled rejections
 process.on('unhandledRejection', (err) => {
   console.log('Unhandled rejection');
-  console.log(err.name, err.message);
+  // console.log(err.name, err.message);/
   server.close(() => {
     process.exit(1);
   });

@@ -24,6 +24,14 @@ export const signup = catchAsync(async (req, res, next) => {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 
+  const cookieOptions = {
+    expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000),
+    secure: true,
+    httpOnly: true
+  };
+  if(process.env.NODE_ENV === 'production') cookieOptions.secure = true;
+  res.cookie('jwt', token, cookieOptions);
+
   res.status(201).json({
     status: 'success',
     token,
@@ -80,7 +88,8 @@ export const protect = catchAsync(async (req, res, next) => {
 
   // Now you can use verifyTokenAsync as a promisified version of jwt.verify
   const decoded = await verifyTokenAsync(token, process.env.JWT_SECRET);
-  // console.log(decoded);
+  console.log(decoded);
+  console.log(decoded.id);
 
   //check if user still exists
   const freshUser = await user.findById(decoded.id);
