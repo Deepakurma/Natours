@@ -2,6 +2,8 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import fs from 'fs';
 import { Tour } from '../../../model/tourModel.js';
+import Review from '../../../model/reviewModel.js';
+import { user } from '../../../model/userModel.js';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 
@@ -33,11 +35,17 @@ mongoose
 
 //read json fiile
 const tours = JSON.parse(fs.readFileSync(`${__dirname}/tours-simple.json`, 'utf-8'));
+const users = JSON.parse(fs.readFileSync(`${__dirname}/users.json`, 'utf-8'));
+const reviews = JSON.parse(fs.readFileSync(`${__dirname}/reviews.json`, 'utf-8'));
+
 
 //importing data into the database
 const importData = async () => {
   try {
     await Tour.create(tours);
+    await user.create(users,{ validateBeforeSave: false});
+    await Review.create(reviews);
+
     console.log('Tour created successfully');
     process.exit(); // Exit the application
   } catch (err) {
@@ -49,6 +57,8 @@ const importData = async () => {
 const deleteData = async () => {
     try{
         await Tour.deleteMany();
+        await user.deleteMany();
+        await Review.deleteMany();
         console.log('data deleted successfully');
         process.exit(); // Exit the application if MongoDB connection fails
     }catch(err){

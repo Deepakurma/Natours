@@ -31,6 +31,7 @@ const userSchema = new mongoose.Schema({
   passwordConfirmation: {
     type: "string",
     required: [true, "password confirmation is required"],
+    select: false,
     validate: {
       validator: function (value) {
         // console.log("this.password:", this.password);

@@ -16,6 +16,7 @@ export const signup = catchAsync(async (req, res, next) => {
   const newUser = await user.create({
     name: req.body.name,
     email: req.body.email,
+    role: req.body.role,
     password: req.body.password,
     passwordConfirmation: req.body.passwordConfirmation,
   });
@@ -108,7 +109,7 @@ export const protect = catchAsync(async (req, res, next) => {
   next();
 });
 
-export const restrictTour = (...roles) => {
+export const restrictTo = (...roles) => {
   return (req, res, next) => {
     //roles is an array
     if (!roles.includes(req.user.role)) {

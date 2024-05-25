@@ -1,41 +1,17 @@
 import { user } from '../../model/userModel.js';
 import AppError from '../../utils/appError.js';
 import { catchAsync } from '../../utils/catchAsync.js';
-
-export const getAllUsers = catchAsync(async(req, res) => {
-  const allUsers = await user.find();
-  res.status(500).json({
-    status: 'error',
-    message: 'invalid user',
-    users : allUsers
-  });
-});
-
-export const getUsers = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'invalid user',
-  });
-};
+import {
+  deleteOne,
+  getAll,
+  getOne,
+  updateOne,
+} from '../controllers/handlerFactory.js';
 
 export const createUser = (req, res) => {
   res.status(500).json({
     status: 'error',
-    message: 'invalid user',
-  });
-};
-
-export const updateUser = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'invalid user',
-  });
-};
-
-export const deleteUser = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'invalid user',
+    message: 'Please use another route this route is not defined!',
   });
 };
 
@@ -68,12 +44,26 @@ export const updateMe = async (req, res, next) => {
   });
 };
 
+export const deleteMe = catchAsync(async (req, res, next) => {
+  await user.findByIdAndUpdate(req.user.id, { active: false });
 
-export const deleteMe = catchAsync( async (req, res , next) => {
-   await user.findByIdAndUpdate(req.user.id, {active: false});
-
-   res.status(204).json({
+  res.status(204).json({
     status: 'success',
-    data: null
+    data: null,
   });
-})
+});
+
+export const getMe = catchAsync(async (req, res, next) => {
+  req.params.id = req.user.id;
+  next();
+});
+
+//
+export const getAllUsers = getAll(user);
+
+export const getUsers = getOne(user);
+
+export const updateUser = updateOne(user);
+
+export const deleteUser = deleteOne(user);
+//

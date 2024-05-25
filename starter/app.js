@@ -9,6 +9,7 @@ import hpp from 'hpp';
 import tourRouter from './routes/tourRoutes.js';
 import { fileURLToPath } from 'url';
 import userRouter from './routes/userRoutes.js';
+import reviewRouter from './routes/reviewRoutes.js';
 import { dirname } from 'path';
 import AppError from '../utils/appError.js';
 import { error } from './controllers/errorControllers.js';
@@ -72,6 +73,9 @@ app.use('/api/v1/tours', tourRouter);
 
 app.use('/api/v1/users', userRouter);
 
+app.use('/api/v1/reviews', reviewRouter);
+
+//error handling
 app.all('*', (req, res, next) => {
   next(new AppError(`cant find ${req.originalUrl}`, 404));
 });

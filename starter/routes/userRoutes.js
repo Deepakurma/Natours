@@ -7,12 +7,13 @@ import {
   deleteUser,
   updateMe,
   deleteMe,
+  getMe,
 } from '../controllers/userController.js';
 import {
   forgotPassword,
   login,
   resetPassword,
-  restrictTour,
+  restrictTo,
   signup,
 } from '../controllers/authControllers.js';
 import { protect } from '../controllers/authControllers.js';
@@ -22,15 +23,16 @@ userRouter.post('/signup', signup);
 userRouter.post('/login', login);
 userRouter.post('/forgotpassword', forgotPassword);
 userRouter.patch('/resetpassword/:token', resetPassword);
+userRouter.get('/me', protect, getMe, getUsers);
 
 //
-userRouter.patch('/updateMe',protect,updateMe);
-userRouter.delete('/deleteMe',protect,deleteMe);
+userRouter.use(protect);
+userRouter.patch('/updateMe', updateMe);
+userRouter.delete('/deleteMe', deleteMe);
 userRouter.route('/').get(getAllUsers).post(createUser);
-userRouter
-  .route('/:id')
-  .get(getUsers)
-  .patch(updateUser)
-  .delete(protect, restrictTour('admin', 'lead-guide'), deleteUser);
+
+//
+userRouter.use(restrictTo('admin', 'lead-guide'));
+userRouter.route('/:id').get(getUsers).patch(updateUser).delete(deleteUser);
 
 export default userRouter;
